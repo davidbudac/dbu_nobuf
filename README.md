@@ -7,11 +7,6 @@ Quick and dirty utility functions.
 @src/dbu_nobuf.pkb
 ```
 
-### Required privileges
-```sql
-GRANT SELECT ON V_$SQL_PLAN TO {USERNAME}
-```
-
 ## Function DESC_FORMATTED
 Pipeline function returning DESC + INDEX matrix.
 
