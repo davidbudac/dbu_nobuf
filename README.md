@@ -1,5 +1,16 @@
 # DBU_NOBUF
-Quick and dirty utility scripts.
+Quick and dirty utility functions.
+
+## Installtion
+```
+@src/dbu_nobuf.pks
+@src/dbu_nobuf.pkb
+```
+
+### Required privileges
+```sql
+GRANT SELECT ON V_$SQL_PLAN TO {USERNAME}
+```
 
 ## Function DESC_FORMATTED
 Pipeline function returning DESC + INDEX matrix.
@@ -18,6 +29,7 @@ from
     table(dbu_nobuf.desc_formatted('MESSAGE_STATE','MD'))
 ```
 
+### Output
 column_name|data_type|nullable|num_distinct|IDX_FK_MESSAGE_TO_M_STATE|IDX_STATE_CODE_RELATION|PK_MESSAGE_STATE
 ---|---|---|---|---|---|---
 MESSAGE_ID|NUMBER|NOT NULL|16717824|##### 1|##### 1|
@@ -53,6 +65,8 @@ from
 where 
     sql_id = 'gh1j9v7bs93p0'
 ```
+
+### Output
 
 ## MESSAGE_ACK_RELATION
 column_name|data_type|nullable|num_distinct|IDX_FK_M_TO_M_RELATION_ACK|IDX_FK_M_TO_M_RELATION_MSG|PK_MESSAGE_RELATION|UQ_MESSAGE_RELATION
