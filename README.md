@@ -1,7 +1,7 @@
 # DBU_NOBUF
 Quick and dirty utility functions.
 
-## Installtion
+## Installation
 ```
 @src/dbu_nobuf.pks
 @src/dbu_nobuf.pkb
