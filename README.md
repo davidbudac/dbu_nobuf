@@ -41,7 +41,7 @@ Getting description of tables accessed within a given query (SQL_ID)
 ```sql
 with tabs as (
   select 
-        distinct object_name, sql_id
+        distinct object_owner, object_name, sql_id
   from 
         v$sql_plan
   where 
@@ -56,9 +56,9 @@ select
     column_value
 from 
     tabs,
-    table(dbu_nobuf.desc_formatted(tabs.object_name,'MD'))
+    table(dbu_nobuf.desc_formatted(tabs.object_name,'MD', tabs.object_owner))
 where 
-    sql_id = 'gh1j9v7bs93p0'
+    sql_id = 'aszh2799fmyms'
 ```
 
 ### Output

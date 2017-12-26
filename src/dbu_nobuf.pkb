@@ -12,10 +12,10 @@ as
           return ifnull_i;
         when string_i is not null then
           return ifnotnull_i;
-    end case;
+    end case; 
   end nvl2;
   
-  function desc_formatted (table_name_i varchar2, format_i varchar2 default 'CSV') 
+  function desc_formatted (table_name_i varchar2, format_i varchar2 default 'CSV', table_owner_i varchar2 default user) 
   return pipe_type_t pipelined 
   as
       sql_l               varchar2(32000);
@@ -41,10 +41,12 @@ as
               ind.column_position column_position,
               col.column_id
           from 
-              user_tab_cols col,
-              user_ind_columns ind
+              all_tab_cols col,
+              all_ind_columns ind
           where 
               col.table_name = '{TABLE_NAME}'
+          and col.owner = '{TABLE_OWNER}'
+          and ind.index_owner = '{TABLE_OWNER}'
           and col.table_name = ind.table_name (+)
           and col.column_name = ind.column_name (+)
           and col.column_id is not null
@@ -56,14 +58,14 @@ as
             {PIVOTED_COLUMNS} 
             )
       )]';
-      --'IDX_TD12ACK_OF'as "IDX_TD12ACK_OF",'IDX_TD12RESP_OF'as "IDX_TD12RESP_OF",'IDX_TD12RSND_OF'as "IDX_TD12RSND_OF",'IDX_TD13DATA_FLOW2'as "IDX_TD13DATA_FLOW2",'IDX_TID12MESSAGE_RECEIVER'as "IDX_TID12MESSAGE_RECEIVER",'IDX_TID12MESSAGE_REGISTER_ID'as "IDX_TID12MESSAGE_REGISTER_ID",'IDX_TID12MESSAGE_SENDER'as "IDX_TID12MESSAGE_SENDER",'IDX_TID12PROCESS_INST'as "IDX_TID12PROCESS_INST",'IDX_TID12TIME_DIM_FROM_TO'as "IDX_TID12TIME_DIM_FROM_TO",'IDX_TID12_TID12REGIS_TIME'as "IDX_TID12_TID12REGIS_TIME",'IX_TID12TIME_DIM_TO'as "IX_TID12TIME_DIM_TO",'PK_TID12MESSAGE_REGISTER'as "PK_TID12MESSAGE_REGISTER"
       
       select listagg(''''||index_name||''''||'as "'||index_name||'"',',') within group (order by index_name) 
       into pivoted_columns_l
       from  
-          user_indexes
+          all_indexes
       where 
           table_name = table_name_i
+      and owner = table_owner_i
       and index_name not like 'SYS%'
       ;
       
@@ -76,9 +78,10 @@ as
         select listagg(index_name,'||'',''||') within group (order by index_name) 
         into output_l
         from  
-            user_indexes
+            all_indexes
         where 
             table_name = table_name_i
+        and owner = table_owner_i
         and index_name not like 'SYS%'
         ;
         
@@ -90,9 +93,10 @@ as
         select listagg(index_name,',') within group (order by index_name) 
         into header_l
         from
-            user_indexes
+            all_indexes
         where 
             table_name = table_name_i 
+        and owner = table_owner_i
         and index_name not like 'SYS%'
         ;
         
@@ -105,9 +109,10 @@ as
         select listagg(index_name,'||''|''||') within group (order by index_name) 
         into output_l
         from  
-            user_indexes
+            all_indexes
         where 
             table_name = table_name_i
+        and owner = table_owner_i
         and index_name not like 'SYS%'
         ;
         
@@ -119,9 +124,10 @@ as
         select listagg(index_name,'|') within group (order by index_name) 
         into header_l
         from
-            user_indexes
+            all_indexes
         where 
             table_name = table_name_i 
+        and owner = table_owner_i
         and index_name not like 'SYS%'
         ;
         
@@ -134,9 +140,10 @@ as
         select count(*)
         into col_count_l
         from
-            user_indexes
+            all_indexes
         where 
             table_name = table_name_i 
+        and owner = table_owner_i
         and index_name not like 'SYS%'
         ;
 
@@ -164,6 +171,7 @@ as
     sql_l := replace (sql_l, '{PIVOTED_COLUMNS}',pivoted_columns_l);
     sql_l := replace (sql_l, '{OUTPUT}',output_l);
     sql_l := replace (sql_l, '{TABLE_NAME}',table_name_i);
+    sql_l := replace (sql_l, '{TABLE_OWNER}',table_owner_i);
     
     dbms_output.put_line(sql_l);
     

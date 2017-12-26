@@ -5,7 +5,7 @@ create or replace package dbu_nobuf as
       
       
   -- DESC
-  function desc_formatted(table_name_i varchar2, format_i varchar2 default 'CSV') 
+  function desc_formatted (table_name_i varchar2, format_i varchar2 default 'CSV', table_owner_i varchar2 default user) 
   return pipe_type_t pipelined ;
 
 end dbu_nobuf;
